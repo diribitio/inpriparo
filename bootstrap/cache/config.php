@@ -762,6 +762,21 @@
       'table' => 'failed_jobs',
     ),
   ),
+  'schedule' => 
+  array (
+    'basic_permissions' => 
+    array (
+      0 => 'feedback.store',
+      1 => 'events.index',
+      2 => 'events.store',
+      3 => 'events.update',
+      4 => 'events.syncPermissions',
+      5 => 'events.destroy',
+      6 => 'users.index',
+      7 => 'roles.index',
+      8 => 'permissions.index',
+    ),
+  ),
   'services' => 
   array (
     'mailgun' => 

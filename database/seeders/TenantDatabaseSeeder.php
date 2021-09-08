@@ -135,7 +135,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding events) for admins
-        $adminEventPermissions = collect(['events.store', 'events.update', 'events.destroy'])->map(function ($name) {
+        $adminEventPermissions = collect(['events.store', 'events.update', 'events.syncPermissions', 'events.destroy'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding preferences) for admins
@@ -148,6 +148,7 @@ class TenantDatabaseSeeder extends Seeder
         });
         // Add admin role
         $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo($adminUserPermissions);
         $adminRole->givePermissionTo($adminFeedbackPermissions);
         $adminRole->givePermissionTo($adminProjectPermissions);
         $adminRole->givePermissionTo($adminFriendshipPermissions);

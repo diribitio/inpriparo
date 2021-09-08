@@ -108,7 +108,7 @@ class EventsController extends Controller
         $event = Event::find($id);
 
         if ($event) {
-            if ($event->syncPermissions($request->input('permissions'))) {
+            if ($event->syncPermissions(array_merge($request->input('permissions'), config('schedule.basic_permissions', [])))) {
                 return response()->json('', 200); 
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);

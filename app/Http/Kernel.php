@@ -40,7 +40,6 @@ class Kernel extends HttpKernel
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
         ],
-
         'api' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
@@ -52,7 +51,7 @@ class Kernel extends HttpKernel
             \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
             // \Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession::class,
             'throttle:api',
-        ],
+        ]
     ];
 
     /**
@@ -65,8 +64,8 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'permissions' => \App\Http\Middleware\Permissions::class,
+        'schedule' => \App\Http\Middleware\Schedule::class,
         'anti.bot.submit' => \App\Http\Middleware\AntiBotSubmit::class,
-        // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
@@ -74,6 +73,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+
+        // 'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        // 'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
     ];
 }

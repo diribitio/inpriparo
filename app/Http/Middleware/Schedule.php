@@ -5,10 +5,10 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Event;
 use App\Models\Permission;
 
-class Permissions
+class Schedule
 {
     /**
      * Handle an incoming request.
@@ -24,14 +24,20 @@ class Permissions
         $object = str_replace('controller', '', strtolower(str_replace('App\Http\Controllers\\', '', $actionName[0])));
         $requiredPermission = $object . '.' . $action;
 
-        if ($this->permissionExists($requiredPermission)) {
-            if (Auth::user()->can($requiredPermission)) {
+        if (in_array($requiredPermission, config('schedule.basic_permissions', []))) {
+            return $next($request);
+        }
+
+        $event = Event::where('from', '<=', date("Y-m-d"))->where('until', '>=', date("Y-m-d"))->first();
+
+        if ($this->permissionExists($requiredPermission) && $event) {
+            if ($event->hasPermissionTo($requiredPermission) || in_array($requiredPermission, config('schedule.basic_permissions', []))) {
                 return $next($request);
             }
         }
         
         if ($request->expectsJson()) {
-            return response()->json(['middleware' => 'Permissions', 'message' => $requiredPermission], 403);
+            return response()->json(['middleware' => 'Schedule', 'message' => $requiredPermission], 403);
         }
 
         return abort(403);
