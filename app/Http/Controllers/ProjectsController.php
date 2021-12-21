@@ -41,7 +41,7 @@ class ProjectsController extends Controller
 
             return response()->json(['project' => $project], 200);
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -58,10 +58,10 @@ class ProjectsController extends Controller
 
         if ($project) {
             $project->leader = $project->leader()->first();
-            
+
             return response()->json(['project' => $project], 200);
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -137,7 +137,7 @@ class ProjectsController extends Controller
                 if ($user->save()) {
                     return response()->json('', 200);
                 } else {
-                    return response()->json(['message' => __('errors.updateAccount')], 500); 
+                    return response()->json(['message' => __('errors.updateAccount')], 500);
                 }
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
@@ -189,7 +189,7 @@ class ProjectsController extends Controller
 
             try {
                 if ($project->save()) {
-                    return response()->json('', 200); 
+                    return response()->json('', 200);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
@@ -201,7 +201,7 @@ class ProjectsController extends Controller
                 }
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -218,12 +218,12 @@ class ProjectsController extends Controller
             $project->authorized = !$project->authorized;
 
             if ($project->save()) {
-                return response()->json('', 200); 
+                return response()->json('', 200);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -239,33 +239,35 @@ class ProjectsController extends Controller
 
         if ($project) {
             if ($project->leader()->exists()) {
-                $leader = $project->leader;
+                $leader = $project->leader->first();
                 $leader->syncRoles(['user', 'attendant']);
                 $leader->project_id = 0;
                 $leader->project_role = 0;
                 if ($leader->save()) {
                     // TODO notify user that their project was deleted
                 } else {
-                    $message +=  json(['message' => __('errors.updateAccount')]);
+                    // $message +=  json(['message' => __('errors.updateAccount')]);
                 }
             }
 
             if ($project->assistants()->exists()) {
                 $assistants = $project->assistants;
-    
+
                 $assistants->each(function ($assistant, $key) use ($project) {
-                    $leader->syncRoles(['user', 'attendant']);
+                    $assistant->syncRoles(['user', 'attendant']);
                     $assistant->project_id = 0;
                     $assistant->project_role = 0;
                     if ($assistant->save()) {
                         // TODO notify user that their project was deleted
                     } else {
-                        $message +=  json(['message' => __('errors.updateAccount')]);
+                        // $message +=  json(['message' => __('errors.updateAccount')]);
                     }
                 });
 
                 unset($project->assistants);
             }
+
+            $project->timeframes()->delete();
 
             // TODO check for messages and delete them
 
@@ -274,12 +276,12 @@ class ProjectsController extends Controller
             }
 
             if ($project->delete()) {
-                return response()->json('', 200); 
+                return response()->json('', 200);
             } else {
-                return response()->json(['message' => __('errors.unknownError')], 500); 
+                return response()->json(['message' => __('errors.unknownError')], 500);
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 }

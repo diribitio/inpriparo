@@ -43,7 +43,7 @@ class PreferencesController extends Controller
 
             return response()->json(['preferences' => $preferences], 200);
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -75,7 +75,7 @@ class PreferencesController extends Controller
 
         $user = $this->authUser();
 
-        $project = find($project_id);
+        $project = Project::find($project_id);
 
         if (!$project) {
             $error = \Illuminate\Validation\ValidationException::withMessages([
@@ -134,9 +134,9 @@ class PreferencesController extends Controller
 
         if ($preference) {
             if ($preference->delete()) {
-                return response()->json('', 200); 
+                return response()->json('', 200);
             } else {
-                return response()->json(['message' => __('errors.unknownError')], 500); 
+                return response()->json(['message' => __('errors.unknownError')], 500);
             }
         } else {
             return response()->json(['message' => __('errors.notFound')], 404);

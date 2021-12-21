@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Timeframe;
+use phpDocumentor\Reflection\Project;
 
 class TimeframesController extends Controller
 {
@@ -18,12 +19,14 @@ class TimeframesController extends Controller
     {
         $timeframes = Timeframe::where('project_id', $project_id)->get();
 
+        $project = Project::find($project_id);
+
         if ($project) {
             $project->leader = $project->leader()->first();
 
             return response()->json(['project' => $project], 200);
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -60,9 +63,9 @@ class TimeframesController extends Controller
         $timeframe->until = $request->input('until');
 
         if ($timeframe->save()) {
-            return response()->json('', 200); 
+            return response()->json('', 200);
         } else {
-            return response()->json(['message' => __('errors.unknownError')], 500); 
+            return response()->json(['message' => __('errors.unknownError')], 500);
         }
     }
 
@@ -102,7 +105,7 @@ class TimeframesController extends Controller
 
             try {
                 if ($timeframe->save()) {
-                    return response()->json('', 200); 
+                    return response()->json('', 200);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
@@ -114,7 +117,7 @@ class TimeframesController extends Controller
                 }
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
@@ -141,12 +144,12 @@ class TimeframesController extends Controller
 
         if ($timeframe) {
             if ($timeframe->delete()) {
-                return response()->json('', 200); 
+                return response()->json('', 200);
             } else {
-                return response()->json(['message' => __('errors.unknownError')], 500); 
+                return response()->json(['message' => __('errors.unknownError')], 500);
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 500); 
+            return response()->json(['message' => __('errors.notFound')], 500);
         }
     }
 }
