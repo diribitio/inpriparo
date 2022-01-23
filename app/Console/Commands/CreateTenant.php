@@ -20,7 +20,7 @@ class CreateTenant extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a tenant and the corresponding database, e.g. php artisan tenant:create MyTenantInc mytenantinc.';
+    protected $description = 'Creates a tenant and the corresponding database, e.g. php artisan tenant:create MyTenantInc mytenantinc';
 
     /**
      * Create a new command instance.
