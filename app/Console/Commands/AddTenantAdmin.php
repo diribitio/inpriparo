@@ -9,6 +9,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Notifications\AdminInvitationNotification;
 
+// To migrate the landlord table run: php artisan migrate --database=landlord --path="database/migrations/landlord/"
+
 class AddTenantAdmin extends Command
 {
     /**
