@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -15,9 +16,10 @@ class Controller extends BaseController
     /**
      * Get the authenticated user.
      *
-     * @return user of type \App\User
+     * @return Authenticatable of type \App\User
      */
-    public function authUser() {
+    public function authUser(): Authenticatable
+    {
         return Auth::user();
     }
 }

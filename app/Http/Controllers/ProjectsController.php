@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\ProjectDeletedNotification;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Project;
-use App\Models\User;
 
 class ProjectsController extends Controller
 {
     /**
      * Display all projects.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $projects = Project::all();
 
@@ -30,9 +32,9 @@ class ProjectsController extends Controller
      * Display the project with the specified id.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
         $project = Project::find($id);
 
@@ -48,9 +50,9 @@ class ProjectsController extends Controller
     /**
      * Display the project associated with the user. (Regaredless of the role)
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show_associated()
+    public function show_associated(): JsonResponse
     {
         $user = $this->authUser();
 
@@ -68,10 +70,11 @@ class ProjectsController extends Controller
     /**
      * Store a new project and assign the user to it.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request): JsonResponse
+    {
         if ($request->hasFile('image')) {
             $validator = Validator::make($request->all(), [
                 'topic' => 'required|string',
@@ -124,7 +127,7 @@ class ProjectsController extends Controller
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('image')->getClientOriginalExtension();
             $fileNameToStore= $filename.'_'.time().'.'.$extension;
-            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+            // $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
             $project->image = $fileNameToStore;
         }
 
@@ -135,14 +138,14 @@ class ProjectsController extends Controller
                 $user->project_role = 3;
 
                 if ($user->save()) {
-                    return response()->json('', 200);
+                    return response()->json(['message' => __('success.storedProject')]);
                 } else {
                     return response()->json(['message' => __('errors.updateAccount')], 500);
                 }
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             if ($e->getCode() == '23000') {
                 return response()->json(['message' => __('errors.alreadyExists')], 422);
             } else {
@@ -154,10 +157,11 @@ class ProjectsController extends Controller
     /**
      * Update a users project.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function update_associated(Request $request) {
+    public function update_associated(Request $request): JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'topic' => 'required|string',
             'title' => 'required|string|min:5',
@@ -189,11 +193,11 @@ class ProjectsController extends Controller
 
             try {
                 if ($project->save()) {
-                    return response()->json('', 200);
+                    return response()->json(['message' => __('success.updatedProject')]);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 if ($e->getCode() == '23000') {
                     return response()->json(['message' => __('errors.alreadyExists')], 422);
                 } else {
@@ -208,17 +212,18 @@ class ProjectsController extends Controller
     /**
      * Toggle the authorized property of a project.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function toggleAuthorized($id) {
+    public function toggleAuthorized(int $id): JsonResponse
+    {
         $project = Project::find($id);
 
         if ($project) {
             $project->authorized = !$project->authorized;
 
             if ($project->save()) {
-                return response()->json('', 200);
+                return response()->json(['message' => __('success.toggledProjectAuthorized')]);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
@@ -230,10 +235,10 @@ class ProjectsController extends Controller
     /**
      * Delete the specified project.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         $project = Project::find($id);
 
@@ -244,9 +249,7 @@ class ProjectsController extends Controller
                 $leader->project_id = 0;
                 $leader->project_role = 0;
                 if ($leader->save()) {
-                    // TODO notify user that their project was deleted
-                } else {
-                    // $message +=  json(['message' => __('errors.updateAccount')]);
+                    $leader->notify(new ProjectDeletedNotification());
                 }
             }
 
@@ -258,9 +261,7 @@ class ProjectsController extends Controller
                     $assistant->project_id = 0;
                     $assistant->project_role = 0;
                     if ($assistant->save()) {
-                        // TODO notify user that their project was deleted
-                    } else {
-                        // $message +=  json(['message' => __('errors.updateAccount')]);
+                        $assistant->sendProjectDeletedNotification();
                     }
                 });
 
@@ -269,14 +270,12 @@ class ProjectsController extends Controller
 
             $project->timeframes()->delete();
 
-            // TODO check for messages and delete them
-
             if ($project->image != null && $project->image != '') {
                 Storage::delete('public/images/'. $project->image);
             }
 
             if ($project->delete()) {
-                return response()->json('', 200);
+                return response()->json(['message' => __('success.destroyedProject')]);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }

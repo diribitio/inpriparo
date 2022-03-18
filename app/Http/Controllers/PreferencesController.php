@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 use App\Models\Preference;
 use App\Models\User;
 use App\Models\Project;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 
 class PreferencesController extends Controller
 {
     /**
      * Display all preferences.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $preferences = Preference::all();
 
@@ -24,16 +25,16 @@ class PreferencesController extends Controller
             $preferences->project = Project::find($preferences->project_id);
         });
 
-        return response()->json(['preferences' => $preferences], 200);
+        return response()->json(['preferences' => $preferences]);
     }
 
     /**
      * Display the preferences with the specified id.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
         $preferences = Preference::all();
 
@@ -41,7 +42,7 @@ class PreferencesController extends Controller
             $preferences->user = User::find($preferences->user_id);
             $preferences->project = Project::find($preferences->project_id);
 
-            return response()->json(['preferences' => $preferences], 200);
+            return response()->json(['preferences' => $preferences]);
         } else {
             return response()->json(['message' => __('errors.notFound')], 404);
         }
@@ -50,9 +51,9 @@ class PreferencesController extends Controller
     /**
      * Display the preferences associated with the user.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show_associated()
+    public function show_associated(): JsonResponse
     {
         $user = $this->authUser();
 
@@ -62,38 +63,39 @@ class PreferencesController extends Controller
             $preferences->project = Project::find($preferences->project_id);
         });
 
-        return response()->json(['preferences' => $preferences], 200);
+        return response()->json(['preferences' => $preferences]);
     }
 
     /**
      * Store a new preferences.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $project_id
+     * @return JsonResponse
      */
-    public function store($project_id) {
+    public function store(int $project_id): JsonResponse
+    {
 
         $user = $this->authUser();
 
         $project = Project::find($project_id);
 
         if (!$project) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.projectNotFound')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if (!$project->authorized) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.projectNotAuthorized')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if (Preference::where('user_id', $user->id)->where('project_id', $project->id)->get()->isNotEmpty()) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.alreadyExists')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         }  else if ($user->project_id == $project->id) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.musntBeYourProject')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
@@ -107,11 +109,11 @@ class PreferencesController extends Controller
 
         try {
             if ($preference->save()) {
-                return response()->json('', 200);
+                return response()->json(['message' => __('success.storedPreference')]);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             if ($e->getCode() == '23000') {
                 return response()->json(['message' => __('errors.alreadyExists')], 422);
             } else {
@@ -123,10 +125,10 @@ class PreferencesController extends Controller
     /**
      * Delete the preference with the specified id.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         $user = $this->authUser();
 
@@ -134,7 +136,7 @@ class PreferencesController extends Controller
 
         if ($preference) {
             if ($preference->delete()) {
-                return response()->json('', 200);
+                return response()->json(['message' => __('success.destroyedPreference')]);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }

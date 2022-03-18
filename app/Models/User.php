@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
+use App\Notifications\ProjectDeletedNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyEmailNotification;
 use App\Notifications\ResetPasswordNotification;
-use App\Models\Project;
-use App\Models\Friendship;
-use App\Models\Preference;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -50,6 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
 
     public function project()
     {

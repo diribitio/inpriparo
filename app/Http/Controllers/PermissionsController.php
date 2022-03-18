@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Permission;
+use Illuminate\Http\JsonResponse;
 
 class PermissionsController extends Controller
 {
     /**
      * Display all permissions.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $permission = Permission::orderBy('name')->get();
 
-        return response()->json(['permissions' => $permission], 200);
+        return response()->json(['permissions' => $permission]);
     }
 }

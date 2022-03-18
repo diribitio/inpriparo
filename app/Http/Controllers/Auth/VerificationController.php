@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
 use App\Http\Controllers\Controller;
-use Illuminate\Auth\Access\AuthorizationException;
 
 class VerificationController extends Controller
 {
@@ -52,14 +53,14 @@ class VerificationController extends Controller
 	/**
 	 * Mark the authenticated user's email address as verified.
 	 *
-	 * @param \Illuminate\Http\Request $request
+	 * @param Request $request
 	 *
-	 * @return \Illuminate\Http\Response
-	 *
-	 * @throws \Illuminate\Auth\Access\AuthorizationException
+	 * @return RedirectResponse
+     *
+	 * @throws AuthorizationException
 	 */
-	public function verify(Request $request)
-	{
+	public function verify(Request $request): RedirectResponse
+    {
 		if ($request->user() && $request->user() != $request->route('id')) {
 			Auth::logout();
 		}

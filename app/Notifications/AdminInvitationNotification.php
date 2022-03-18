@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Password;
@@ -37,9 +36,9 @@ class AdminInvitationNotification extends Notification
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
-    public function toMail($notifiable)
+    public function toMail($notifiable): MailMessage
     {
         $token = Password::broker()->createToken($notifiable);
         $resetUrl = url(config(config('inpriparo.frontend') . '.protocol') . '://' . app('currentTenant')->domain . config(config('inpriparo.frontend') . '.reset_password_redirect_route') . '/' . $token);
@@ -47,9 +46,9 @@ class AdminInvitationNotification extends Notification
         $app = config('app.name');
 
         return (new MailMessage())
-            ->subject("{$app} Invitation")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("You have been invited to use {$app}!")
+            ->subject("$app Invitation")
+            ->greeting("Hello $notifiable->name,")
+            ->line("You have been invited to use $app!")
             ->line('To get started you need to set a password.')
             ->action('Set password', $resetUrl);
     }

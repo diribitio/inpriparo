@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Friendship;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 class FriendshipsController extends Controller
 {
     /**
      * Display all friendships.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         $friendships = Friendship::all();
 
@@ -23,16 +26,16 @@ class FriendshipsController extends Controller
             $friendship->respondent = User::find($friendship->respondent_id);
         });
 
-        return response()->json(['friendships' => $friendships], 200);
+        return response()->json(['friendships' => $friendships]);
     }
 
     /**
      * Display the friendship with the specified id.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
         $friendship = Friendship::find($id);
 
@@ -40,18 +43,18 @@ class FriendshipsController extends Controller
             $friendship->applicant = User::find($friendship->applicant_id);
             $friendship->respondent = User::find($friendship->respondent_id);
 
-            return response()->json(['friendship' => $friendship], 200);
+            return response()->json(['friendship' => $friendship]);
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
     /**
      * Display the friendships associated with the user.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show_associated()
+    public function show_associated(): JsonResponse
     {
         $user = $this->authUser();
 
@@ -66,16 +69,17 @@ class FriendshipsController extends Controller
             $received_friendship->respondent = User::find($received_friendship->respondent_id);
         });
 
-        return response()->json(['offered_friendships' => $offered_friendships, 'received_friendships' => $received_friendships], 200);
+        return response()->json(['offered_friendships' => $offered_friendships, 'received_friendships' => $received_friendships]);
     }
 
     /**
      * Store a new friendship.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request): JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'respondent_email' => 'required',
         ]);
@@ -89,22 +93,22 @@ class FriendshipsController extends Controller
         $respondent = User::where('email', $request->input('respondent_email'))->first();
 
         if (!$respondent) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'respondent_email' => [__('validation.user')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if (!$respondent->can('friendships.accept')) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'respondent_email' => [__('validation.userCannotAcceptFriendship')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if ($respondent->id == $user->id) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'respondent_email' => [__('validation.musntBeYou')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if (Friendship::where('applicant_id', $user->id)->where('respondent_id', $respondent->id)->get()->isNotEmpty() || Friendship::where('applicant_id', $respondent->id)->where('respondent_id', $user->id)->get()->isNotEmpty()) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'respondent_email' => [__('validation.alreadyExists')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
@@ -117,11 +121,11 @@ class FriendshipsController extends Controller
 
         try {
             if ($friendship->save()) {
-                return response()->json('', 200);
+                return response()->json(['message' => __('success.storedFriendship')]);
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             if ($e->getCode() == '23000') {
                 return response()->json(['message' => __('errors.alreadyExists')], 422);
             } else {
@@ -131,12 +135,13 @@ class FriendshipsController extends Controller
     }
 
     /**
-     * Accept a users friendship.
+     * Accept a user's friendship.
      *
-     * @param  int  $applicant_id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function accept($id) {
+    public function accept(int $id): JsonResponse
+    {
 
         $user = $this->authUser();
 
@@ -147,11 +152,11 @@ class FriendshipsController extends Controller
 
             try {
                 if ($friendship->save()) {
-                    return response()->json('', 200); 
+                    return response()->json(['message' => __('success.acceptedFriendship')]);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 if ($e->getCode() == '23000') {
                     return response()->json(['message' => __('errors.alreadyExists')], 422);
                 } else {
@@ -159,17 +164,18 @@ class FriendshipsController extends Controller
                 }
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
     /**
      * Authorize a friendship.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function authorise($id) {
+    public function authorise(int $id): JsonResponse
+    {
 
         $friendship = Friendship::find($id);
 
@@ -183,11 +189,11 @@ class FriendshipsController extends Controller
 
             try {
                 if ($friendship->save()) {
-                    return response()->json('', 200); 
+                    return response()->json(['message' => __('success.authorizedFriendship')]);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 if ($e->getCode() == '23000') {
                     return response()->json(['message' => __('errors.alreadyExists')], 422);
                 } else {
@@ -195,17 +201,18 @@ class FriendshipsController extends Controller
                 }
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
     /**
      * Decline a friendship.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function decline($id) {
+    public function decline(int $id): JsonResponse
+    {
 
         $friendship = Friendship::find($id);
 
@@ -219,11 +226,11 @@ class FriendshipsController extends Controller
 
             try {
                 if ($friendship->save()) {
-                    return response()->json('', 200); 
+                    return response()->json(['message' => __('success.declinedFriendship')]);
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 if ($e->getCode() == '23000') {
                     return response()->json(['message' => __('errors.alreadyExists')], 422);
                 } else {
@@ -231,17 +238,17 @@ class FriendshipsController extends Controller
                 }
             }
         } else {
-            return response()->json(['message' => __('errors.notFound')], 404); 
+            return response()->json(['message' => __('errors.notFound')], 404);
         }
     }
 
     /**
      * Delete the friendship with the specified id.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         $user = $this->authUser();
 
@@ -249,9 +256,9 @@ class FriendshipsController extends Controller
 
         if ($friendship) {
             if ($friendship->delete()) {
-                return response()->json('', 200); 
+                return response()->json(['message' => __('success.deletedFriendship')]);
             } else {
-                return response()->json(['message' => __('errors.unknownError')], 500); 
+                return response()->json(['message' => __('errors.unknownError')], 500);
             }
         } else {
             return response()->json(['message' => __('errors.notFound')], 404);

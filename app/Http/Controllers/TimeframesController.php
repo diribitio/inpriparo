@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Timeframe;
+use Illuminate\Validation\ValidationException;
 use phpDocumentor\Reflection\Project;
 
 class TimeframesController extends Controller
@@ -12,10 +15,10 @@ class TimeframesController extends Controller
     /**
      * Display the timeframes of the project with the specified id
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $project_id
+     * @return JsonResponse
      */
-    public function show($project_id)
+    public function show(int $project_id): JsonResponse
     {
         $timeframes = Timeframe::where('project_id', $project_id)->get();
 
@@ -33,10 +36,11 @@ class TimeframesController extends Controller
     /**
      * Store a new timeframe.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request): JsonResponse
+    {
         $validator = Validator::make($request->all(), [
             'from' => 'required|date',
             'until' => 'required|date|after:from',
@@ -51,7 +55,7 @@ class TimeframesController extends Controller
         $project = $user->project()->first();
 
         if (!$project) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.projectNotFound')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
@@ -72,17 +76,18 @@ class TimeframesController extends Controller
     /**
      * Update the timeframe.
      *
-     * @param  int  $id
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function update($id, Request $request) {
+    public function update(int $id, Request $request): JsonResponse
+    {
         $user = $this->authUser();
 
         $project = $user->project()->first();
 
         if (!$project) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.projectNotFound')],
             ]);
             return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
@@ -109,7 +114,7 @@ class TimeframesController extends Controller
                 } else {
                     return response()->json(['message' => __('errors.unknownError')], 500);
                 }
-            } catch (\Illuminate\Database\QueryException $e) {
+            } catch (QueryException $e) {
                 if ($e->getCode() == '23000') {
                     return response()->json(['message' => __('errors.alreadyExists')], 422);
                 } else {
@@ -124,17 +129,17 @@ class TimeframesController extends Controller
     /**
      * Delete the timeframe with the specified id.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(int $id): JsonResponse
     {
         $user = $this->authUser();
 
         $project = $user->project()->first();
 
         if (!$project) {
-            $error = \Illuminate\Validation\ValidationException::withMessages([
+            $error = ValidationException::withMessages([
                 'project_id' => [__('validation.projectNotFound')],
             ]);
             return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
@@ -144,7 +149,7 @@ class TimeframesController extends Controller
 
         if ($timeframe) {
             if ($timeframe->delete()) {
-                return response()->json('', 200);
+                return response()->json('');
             } else {
                 return response()->json(['message' => __('errors.unknownError')], 500);
             }
