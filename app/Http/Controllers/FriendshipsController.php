@@ -94,7 +94,7 @@ class FriendshipsController extends Controller
 
         if (!$respondent) {
             $error = ValidationException::withMessages([
-                'respondent_email' => [__('validation.user')],
+                'respondent_email' => [__('validation.userNotFound')],
              ]);
              return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
         } else if (!$respondent->can('friendships.accept')) {

@@ -20,10 +20,10 @@ class TenantDatabaseSeeder extends Seeder
 
     /**
      * Adds the roles and permissions
-     * 
+     *
      * Every user has the basic user role and permissions. These are then extendet by
      * one additional roles like the admin role, etc.
-     * 
+     *
      * The naming of the permissions must match the pattern controller.function. However
      * the 'controller' part must be all lowercase and musn't have an instance of the word 'controller'.
      *
@@ -34,12 +34,12 @@ class TenantDatabaseSeeder extends Seeder
         // Create basic permissions for users
         $userPermissions = collect(['feedback.store', 'projects.index', 'projects.show', 'timeframes.show', 'events.index'])->map(function ($name) {
             return $this->createPermission($name);
-        });  
+        });
         // Add a default user role
         $userRole = Role::create(['name' => 'user']);
         $userRole->givePermissionTo($userPermissions);
 
-        
+
         // Create permissions (regarding projects) for attendants
         $attendantProjectPermissions = collect(['projects.store'])->map(function ($name) {
             return $this->createPermission($name);
@@ -131,7 +131,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding friendships) for admins
-        $adminFriendshipPermissions = collect(['friendships.index', 'friendships.show', 'friendships.authorize', 'friendships.decline'])->map(function ($name) {
+        $adminFriendshipPermissions = collect(['friendships.index', 'friendships.show', 'friendships.authorise', 'friendships.decline'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding events) for admins

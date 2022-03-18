@@ -249,7 +249,7 @@ class ProjectsController extends Controller
                 $leader->project_id = 0;
                 $leader->project_role = 0;
                 if ($leader->save()) {
-                    $leader->notify(new ProjectDeletedNotification());
+                    $leader->sendProjectDeletedNotification();
                 }
             }
 

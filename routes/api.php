@@ -52,7 +52,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('friendships', [FriendshipsController::class, 'index']);
             Route::get('friendships/{id}', [FriendshipsController::class, 'show']);
-            Route::put('friendships/authorize/{id}', [FriendshipsController::class, 'authorise']);
+            Route::put('friendships/authorise/{id}', [FriendshipsController::class, 'authorise']);
             Route::put('friendships/decline/{id}', [FriendshipsController::class, 'decline']);
 
             Route::get('preferences', [PreferencesController::class, 'index']);

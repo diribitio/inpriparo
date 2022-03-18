@@ -49,6 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->notify(new ResetPasswordNotification($token));
     }
 
+    public function sendProjectDeletedNotification()
+    {
+        $this->notify(new ProjectDeletedNotification());
+    }
 
     public function project()
     {

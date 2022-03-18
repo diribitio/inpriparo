@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'storedEvent' => 'Successfully created the event',
+    'storedEvent' => 'Das Event wurde erfolgreich erstellt.',
     'updatedEvent' => 'Successfully updated the event',
     'destroyedEvent' => 'Successfully deleted the event',
     'storedFeedback' => 'Your feedback helps us to improve this site and ultimately also your and everybody else\'s user experience!',
@@ -23,11 +23,11 @@ return [
     'authorizedFriendship' => 'Successfully authorized a friendship proposal',
     'declinedFriendship' => 'Successfully declined a friendship proposal',
     'deletedFriendship' => 'Successfully deleted a friendship (proposal)',
-    'storedPreference' => 'Successfully created a project preference',
-    'destroyedPreference' => 'Successfully deleted the project preference',
-    'storedProject' => 'Successfully created a project',
-    'toggledProjectAuthorized' => 'Successfully toggled authorised',
+    'storedPreference' => 'Successfully added the project to your preferences',
+    'destroyedPreference' => 'Successfully removed the project from your preferences',
+    'storedProject' => 'Successfully created your project',
     'updatedProject' => 'Successfully updated your project',
+    'toggledProjectAuthorized' => 'Successfully toggled authorized',
     'destroyedProject' => 'Successfully deleted the project'
 
 ];
