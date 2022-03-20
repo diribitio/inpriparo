@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'storedEvent' => 'Das Event wurde erfolgreich erstellt.',
+    'storedEvent' => 'Successfully created the event',
     'updatedEvent' => 'Successfully updated the event',
     'destroyedEvent' => 'Successfully deleted the event',
     'storedFeedback' => 'Your feedback helps us to improve this site and ultimately also your and everybody else\'s user experience!',
