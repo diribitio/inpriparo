@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApplicationSettings;
 use App\Models\Preference;
 use App\Models\User;
 use App\Models\Project;
@@ -78,6 +79,12 @@ class PreferencesController extends Controller
         $user = $this->authUser();
 
         $project = Project::find($project_id);
+
+        $appSettings = ApplicationSettings::take(1)->first();
+
+        if (count($user->preferences) >= $appSettings->max_preferences) {
+            return response()->json(['message' => __('validation.reachedPreferenceLimit')], 406);
+        }
 
         if (!$project) {
             $error = ValidationException::withMessages([

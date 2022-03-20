@@ -7,9 +7,9 @@ return [
     | Basic permissions
     |--------------------------------------------------------------------------
     |
-    | These permssions will be ignored by the schedule middleware, therefore never
+    | These permissions will be ignored by the schedule middleware, therefore never
     | blocking access based on the current event. Note that this will NOT disable
-    | the check in the permissions middleware!
+    | the check in the permissions' middleware!
     |
     */
 
@@ -22,7 +22,8 @@ return [
         'events.destroy',
         'users.index',
         'roles.index',
-        'permissions.index'
+        'permissions.index',
+        'applicationsettings.show'
     ],
 
 ];

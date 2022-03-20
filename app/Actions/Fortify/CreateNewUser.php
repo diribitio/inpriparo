@@ -2,10 +2,12 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\ApplicationSettings;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
 class CreateNewUser implements CreatesNewUsers
@@ -27,18 +29,29 @@ class CreateNewUser implements CreatesNewUsers
                 'string',
                 'email',
                 'max:255',
+                'not_regex:/[^\x20-\x7e]/', // TODO Might be removed but mailtrap.io can't handle special chars in the email address
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
         ])->validate();
 
-        $user = User::create([
+
+            $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);
 
-        $user->syncRoles(['user', 'attendant']);
+        $appSettings = ApplicationSettings::take(1)->first();
+
+        $admin_email_parts = explode('@', $user->email);
+        $admin_email_domain = end($admin_email_parts);
+
+        if ('@' . $admin_email_domain == $appSettings->non_guest_email_domain) {
+            $user->syncRoles(['user', 'attendant']);
+        } else {
+            $user->syncRoles(['user', 'guestAttendant']);
+        }
 
         return $user;
     }

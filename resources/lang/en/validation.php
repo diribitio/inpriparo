@@ -143,6 +143,8 @@ return [
     'roleInUse' => 'There are still users with that role.',
     'userCannotAcceptFriendship' => 'This user can\'t accept any friendship requests.',
     'projectNotAuthorized' => 'This project has not yet been authorized.',
+    'reachedPreferenceLimit' => 'You\'ve already reached the maximum amount of preferences and can\'t add any more.',
+    'reachedFriendsLimit' => 'You\'ve already reached the maximum amount of friends/proposals and can\'t add any more.',
 
     /*
     |--------------------------------------------------------------------------
@@ -156,5 +158,4 @@ return [
     */
 
     'attributes' => [],
-
 ];

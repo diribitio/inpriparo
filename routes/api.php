@@ -14,6 +14,7 @@ use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\TimeframesController;
+use App\Http\Controllers\ApplicationSettingsController;
 
 use App\Models\Event;
 
@@ -24,7 +25,7 @@ use App\Models\Event;
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| is assigned the "api" middleware group.
 |
 */
 
@@ -64,6 +65,9 @@ Route::middleware('auth')->group(function () {
             Route::post('roles', [RolesController::class, 'store']);
             Route::patch('roles/{id}', [RolesController::class, 'togglePermission']);
             Route::delete('roles/{id}', [RolesController::class, 'destroy']);
+
+            Route::get('application-settings', [ApplicationSettingsController::class, 'show']);
+            Route::put('application-settings', [ApplicationSettingsController::class, 'update']);
 
             // Routes which are user specific
 

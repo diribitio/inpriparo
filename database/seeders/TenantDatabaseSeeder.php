@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ApplicationSettings;
 use Illuminate\Database\Seeder;
 use App\Models\Permission;
 use App\Models\Role;
@@ -16,16 +17,17 @@ class TenantDatabaseSeeder extends Seeder
     public function run()
     {
         $this->addRolesAndPermissions();
+        $this->setDefaultApplicationSettings();
     }
 
     /**
      * Adds the roles and permissions
      *
-     * Every user has the basic user role and permissions. These are then extendet by
+     * Every user has the basic user role and permissions. These are then extended by
      * one additional roles like the admin role, etc.
      *
-     * The naming of the permissions must match the pattern controller.function. However
-     * the 'controller' part must be all lowercase and musn't have an instance of the word 'controller'.
+     * The naming of the permissions must match the pattern controller.function. However,
+     * the 'controller' part must be all lowercase and mustn't have an instance of the word 'controller'.
      *
      * @return void
      */
@@ -146,6 +148,10 @@ class TenantDatabaseSeeder extends Seeder
         $adminRolesAndPermissionsPermissions = collect(['permissions.index', 'roles.index', 'roles.store', 'roles.togglePermission', 'roles.destroy'])->map(function ($name) {
             return $this->createPermission($name);
         });
+        // Create permissions (regarding application settings) for admins
+        $adminApplicationSettingsPermissions = collect(['applicationsettings.show', 'applicationsettings.update'])->map(function ($name) {
+            return $this->createPermission($name);
+        });
         // Add admin role
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo($adminUserPermissions);
@@ -155,10 +161,31 @@ class TenantDatabaseSeeder extends Seeder
         $adminRole->givePermissionTo($adminEventPermissions);
         $adminRole->givePermissionTo($adminPreferencesPermissions);
         $adminRole->givePermissionTo($adminRolesAndPermissionsPermissions);
+        $adminRole->givePermissionTo($adminApplicationSettingsPermissions);
 
 
         // unused permissions
         $this->createPermission('projects.authorize_associated');
+    }
+
+    /**
+     * Adds the default application settings
+     *
+     * Note: application_settings is a table which should at all times only contain one item. Logically
+     * there is no way to create such an object which is why it has be created beforehand.
+     *
+     * @return void
+     */
+    private function setDefaultApplicationSettings()
+    {
+        $appSettings = new ApplicationSettings;
+
+        $appSettings->non_guest_email_domain = config('inpriparo.defaultApplicationSettings.non_guest_email_domain');
+        $appSettings->max_friends = config('inpriparo.defaultApplicationSettings.max_friends');
+        $appSettings->min_preferences = config('inpriparo.defaultApplicationSettings.min_preferences');
+        $appSettings->max_preferences = config('inpriparo.defaultApplicationSettings.max_preferences');
+
+        $appSettings->save();
     }
 
     /**

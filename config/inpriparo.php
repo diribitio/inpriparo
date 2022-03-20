@@ -23,4 +23,11 @@ return [
 
     'baseUrl' => 'diribitio.de',
 
+    'defaultApplicationSettings' => [
+        'non_guest_email_domain' => '@s.school.com',
+        'max_friends' => 2,
+        'min_preferences' => 3,
+        'max_preferences' => 5,
+    ],
+
 ];

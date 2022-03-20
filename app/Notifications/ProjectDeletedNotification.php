@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Lang;
 
 class ProjectDeletedNotification extends Notification
 {
-    use Queueable; // TODO this notification is not being sent
+    use Queueable;
 
     /**
      * Create a new notification instance.

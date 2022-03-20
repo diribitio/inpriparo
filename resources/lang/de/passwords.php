@@ -13,10 +13,11 @@ return [
     |
     */
 
-    'reset' => '✔️ Passwort zurückgesetzt - Wir haben Ihr Passwort zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.',
-    'sent' => '✔️ Link gesendet - Wir haben Ihnen den Link zum Zurücksetzen des Passworts per E-Mail zugesandt.',
+    'reset' => 'Passwort zurückgesetzt - Wir haben Ihr Passwort zurückgesetzt. Sie können sich jetzt mit Ihrem neuen Passwort anmelden.',
+    'sent' => 'Link gesendet - Wir haben Ihnen den Link zum Zurücksetzen des Passworts per E-Mail zugesandt.',
     'throttled' => 'Bitte warten Sie, bevor Sie es erneut versuchen.',
     'token' => 'Dieses Passwort-Reset-Token ist ungültig.',
     'user' => "Wir können keinen Benutzer mit dieser E-Mail-Adresse finden.",
+    'doesNotMatch' => 'Das eingegebene Passwort stimmt nicht mit deinem derzeitigen überein'
 
 ];

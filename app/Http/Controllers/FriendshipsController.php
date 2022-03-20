@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApplicationSettings;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
@@ -92,6 +93,12 @@ class FriendshipsController extends Controller
 
         $respondent = User::where('email', $request->input('respondent_email'))->first();
 
+        $appSettings = ApplicationSettings::take(1)->first();
+
+        if (count($user->offered_friendships) + count($user->received_friendships) >= $appSettings->max_friends) {
+            return response()->json(['message' => __('validation.reachedFriendsLimit')], 406);
+        }
+
         if (!$respondent) {
             $error = ValidationException::withMessages([
                 'respondent_email' => [__('validation.userNotFound')],
@@ -149,6 +156,12 @@ class FriendshipsController extends Controller
 
         if ($friendship) {
             $friendship->state = 1;
+
+            $appSettings = ApplicationSettings::take(1)->first();
+
+            if (count($user->offered_friendships) + count($user->received_friendships) >= $appSettings->max_friends) {
+                return response()->json(['message' => __('validation.reachedFriendsLimit')], 406);
+            }
 
             try {
                 if ($friendship->save()) {

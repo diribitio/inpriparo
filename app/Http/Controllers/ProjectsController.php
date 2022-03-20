@@ -82,7 +82,7 @@ class ProjectsController extends Controller
                 'title' => 'required|string|min:5',
                 'description' => 'required|string|min:20',
                 'cost' => 'required|numeric|min:0',
-                'min_grade' => 'required|numeric',
+                'min_grade' => 'required|numeric|min:0',
                 'max_grade' => 'required|numeric|gte:min_grade',
                 'min_participants' => 'required|numeric|min:0',
                 'max_participants' => 'required|numeric|gte:min_participants',
@@ -93,7 +93,7 @@ class ProjectsController extends Controller
                 'title' => 'required|string|min:5',
                 'description' => 'required|string|min:20',
                 'cost' => 'required|numeric|min:0',
-                'min_grade' => 'required|numeric',
+                'min_grade' => 'required|numeric|min:0',
                 'max_grade' => 'required|numeric|gte:min_grade',
                 'min_participants' => 'required|numeric|min:0',
                 'max_participants' => 'required|numeric|gte:min_participants',
@@ -133,7 +133,11 @@ class ProjectsController extends Controller
 
         try {
             if ($project->save()) {
-                $user->syncRoles(['user', 'leader']);
+                if ($user->hasRole('attendant')) {
+                    $user->syncRoles(['user', 'leader']);
+                } else {
+                    $user->syncRoles(['user', 'guestLeader']);
+                }
                 $user->project()->associate($project);
                 $user->project_role = 3;
 
@@ -167,7 +171,7 @@ class ProjectsController extends Controller
             'title' => 'required|string|min:5',
             'description' => 'required|string|min:20',
             'cost' => 'required|numeric|min:0',
-            'min_grade' => 'required|numeric',
+            'min_grade' => 'required|numeric|min:0',
             'max_grade' => 'required|numeric|gte:min_grade',
             'min_participants' => 'required|numeric|min:0',
             'max_participants' => 'required|numeric|gte:min_participants',
@@ -245,7 +249,11 @@ class ProjectsController extends Controller
         if ($project) {
             if ($project->leader()->exists()) {
                 $leader = $project->leader->first();
-                $leader->syncRoles(['user', 'attendant']);
+                if ($leader->hasRole('leader')) {
+                    $leader->syncRoles(['user', 'attendant']);
+                } else {
+                    $leader->syncRoles(['user', 'guestAttendant']);
+                }
                 $leader->project_id = 0;
                 $leader->project_role = 0;
                 if ($leader->save()) {
