@@ -29,9 +29,9 @@ class Permissions
                 return $next($request);
             }
         }
-        
+
         if ($request->expectsJson()) {
-            return response()->json(['middleware' => 'Permissions', 'message' => $requiredPermission], 403);
+            return response()->json(['message' => __('error.missingPermissions'), 'permission' => $requiredPermission], 403);
         }
 
         return abort(403);

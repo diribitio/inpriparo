@@ -127,7 +127,8 @@ class ProjectsController extends Controller
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('image')->getClientOriginalExtension();
             $fileNameToStore= $filename.'_'.time().'.'.$extension;
-            // $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
+            // don't remove the 'unused' variable because it is necessary for storing the image!
+            $path = $request->file('image')->storeAs('public/images', $fileNameToStore);
             $project->image = $fileNameToStore;
         }
 
