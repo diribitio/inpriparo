@@ -101,6 +101,10 @@ class TenantDatabaseSeeder extends Seeder
                 return Permission::where('name', $name)->first();
             }
         });
+        // Create permissions (regarding the promotion of assistants) for leaders
+        $leaderAssistantPermissions = collect(['projects.promote_assistant', 'projects.demote_assistant'])->map(function ($name) {
+            return $this->createPermission($name);
+        });
         // Create permissions (regarding preferences) for leaders
         $leaderPreferencesPermissions = collect(['preferences.show_associated', 'preferences.store', 'preferences.destroy'])->map(function ($name) {
             return $this->createPermission($name);
@@ -112,6 +116,7 @@ class TenantDatabaseSeeder extends Seeder
         // Add leader role
         $leaderRole = Role::create(['name' => 'leader']);
         $leaderRole->givePermissionTo($leaderProjectPermissions);
+        $leaderRole->givePermissionTo($leaderAssistantPermissions);
         $leaderRole->givePermissionTo($leaderPreferencesPermissions);
         $leaderRole->givePermissionTo($leaderTimeframePermissions);
         // Add guest leader role
@@ -121,7 +126,7 @@ class TenantDatabaseSeeder extends Seeder
 
 
         // Create permissions (regarding users) for admins
-        $adminUserPermissions = collect(['users.index'])->map(function ($name) {
+        $adminUserPermissions = collect(['users.index', 'users.convert_to_guestAttendant'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding feedback) for admins
@@ -129,7 +134,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding projects) for admins
-        $adminProjectPermissions = collect(['projects.toggleAuthorized', 'projects.destroy'])->map(function ($name) {
+        $adminProjectPermissions = collect(['projects.toggle_authorized', 'projects.destroy'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding friendships) for admins
@@ -137,7 +142,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding events) for admins
-        $adminEventPermissions = collect(['events.store', 'events.update', 'events.syncPermissions', 'events.destroy'])->map(function ($name) {
+        $adminEventPermissions = collect(['events.store', 'events.update', 'events.sync_permissions', 'events.destroy'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding preferences) for admins
@@ -145,11 +150,15 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding roles and permissions) for admins
-        $adminRolesAndPermissionsPermissions = collect(['permissions.index', 'roles.index', 'roles.store', 'roles.togglePermission', 'roles.destroy'])->map(function ($name) {
+        $adminRolesAndPermissionsPermissions = collect(['permissions.index', 'roles.index', 'roles.store', 'roles.toggle_permission', 'roles.destroy'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding application settings) for admins
         $adminApplicationSettingsPermissions = collect(['applicationsettings.show', 'applicationsettings.update'])->map(function ($name) {
+            return $this->createPermission($name);
+        });
+        // Create permissions (regarding sorting proposals) for admins
+        $adminSortingProposalPermissions = collect(['sorting.show', 'sorting.store', 'sorting.update', 'sorting.destroy', 'sorting.apply'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Add admin role
@@ -162,6 +171,7 @@ class TenantDatabaseSeeder extends Seeder
         $adminRole->givePermissionTo($adminPreferencesPermissions);
         $adminRole->givePermissionTo($adminRolesAndPermissionsPermissions);
         $adminRole->givePermissionTo($adminApplicationSettingsPermissions);
+        $adminRole->givePermissionTo($adminSortingProposalPermissions);
 
 
         // unused permissions

@@ -18,7 +18,7 @@ return [
         'events.index',
         'events.store',
         'events.update',
-        'events.syncPermissions',
+        'events.sync_permissions',
         'events.destroy',
         'users.index',
         'roles.index',

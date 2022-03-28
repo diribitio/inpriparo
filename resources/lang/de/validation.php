@@ -111,6 +111,8 @@ return [
     'projectNotAuthorized' => 'Dieses Projekt ist noch nicht genehmigt worden.',
     'reachedPreferenceLimit' => 'Du hast bereits die maximal Anzahl an Projektwünschen ausgeschöpft und kannst keine weiteren hinzufügen',
     'reachedFriendsLimit' => 'Du hast bereits die maximal Anzahl an Freunden bzw. Freundschaftsanfragen ausgeschöpft und kannst keine weiteren hinzufügen',
+    'userCannotBePromoted' => 'Dieser Benutzer kann nicht zum Assistenten befördert werden.',
+    'userCannotBeDemoted' => 'Dieser Benutzer kann nicht vom Assistenten Rank degradiert werden.',
 
     /*
     |--------------------------------------------------------------------------

@@ -23,5 +23,6 @@ return [
     'updateAccount' => 'updateAccount',
     'friendshipNotAccepted' => 'friendshipNotAccepted',
     'friendshipNotAuthorized' => 'friendshipNotAuthorized',
-    'missingPermissions' => 'missingPermissions'
+    'missingPermissions' => 'missingPermissions',
+    'userCanNotBeConverted' => 'userCanNotBeConverted'
 ];

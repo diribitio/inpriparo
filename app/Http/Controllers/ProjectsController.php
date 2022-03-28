@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Notifications\ProjectDeletedNotification;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Project;
+use Illuminate\Validation\ValidationException;
 
 class ProjectsController extends Controller
 {
@@ -40,6 +42,8 @@ class ProjectsController extends Controller
 
         if ($project) {
             $project->leader = $project->leader()->first();
+            $project->assistants = $project->assistants()->get();
+            $project->participants = $project->participants()->get();
 
             return response()->json(['project' => $project], 200);
         } else {
@@ -60,6 +64,8 @@ class ProjectsController extends Controller
 
         if ($project) {
             $project->leader = $project->leader()->first();
+            $project->assistants = $project->assistants()->get();
+            $project->participants = $project->participants()->get();
 
             return response()->json(['project' => $project], 200);
         } else {
@@ -215,12 +221,109 @@ class ProjectsController extends Controller
     }
 
     /**
+     * Promote the specified user with the attendant_email to assistant rank.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function promote_assistant(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'attendant_email' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $validator->messages()], 406);
+        }
+
+        $user = $this->authUser();
+        $project = $user->project()->first();
+
+        $potentialAssistant = User::where('email', $request->input('attendant_email'))->first();
+
+        if (!$potentialAssistant) {
+            $error = ValidationException::withMessages([
+                'attendant_email' => [__('validation.userNotFound')],
+            ]);
+            return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
+        } else if (!$potentialAssistant->hasRole('attendant')) {
+            $error = ValidationException::withMessages([
+                'attendant_email' => [__('validation.userCannotBePromoted')],
+            ]);
+            return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
+        } else if (!$potentialAssistant->can('projects.store')) {
+            $error = ValidationException::withMessages([
+                'attendant_email' => [__('validation.userCannotBePromoted')],
+            ]);
+            return response()->json(['message' => __('errors.invalidRequestData'), 'errors' => $error-> errors()], 406);
+        }
+
+
+        try {
+            $potentialAssistant->syncRoles(['user', 'assistant']);
+            $potentialAssistant->project()->associate($project);
+            $potentialAssistant->project_role = 2;
+
+            if ($potentialAssistant->save()) {
+                return response()->json(['message' => __('success.updatedProject')]);
+            } else {
+                return response()->json(['message' => __('errors.unknownError')], 500);
+            }
+        } catch (QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return response()->json(['message' => __('errors.alreadyExists')], 422);
+            } else {
+                return response()->json(['message' => $e], 500);
+            }
+        }
+    }
+
+    /**
+     * Demote the specified user with the attendant_email from assistant rank.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function demote_assistant(int $id): JsonResponse
+    {
+        $user = $this->authUser();
+        $project = $user->project()->first();
+
+        $assistant = $project->assistants()->where('id', $id)->first();
+
+        if (!$assistant) {
+            return response()->json(['message' => __('errors.notFound')], 406);
+        } else if (!$assistant->hasRole('assistant')) {
+            return response()->json(['message' => __('errors.invalidRequestData')], 406);
+        }
+
+
+        try {
+            $assistant->syncRoles(['user', 'attendant']);
+            $assistant->project_id = 0;
+            $assistant->project_role = 0;
+
+            if ($assistant->save()) {
+                return response()->json(['message' => __('success.updatedProject')]);
+            } else {
+                return response()->json(['message' => __('errors.unknownError')], 500);
+            }
+        } catch (QueryException $e) {
+            if ($e->getCode() == '23000') {
+                return response()->json(['message' => __('errors.alreadyExists')], 422);
+            } else {
+                return response()->json(['message' => $e], 500);
+            }
+        }
+    }
+
+    /**
      * Toggle the authorized property of a project.
      *
      * @param int $id
      * @return JsonResponse
      */
-    public function toggleAuthorized(int $id): JsonResponse
+    public function toggle_authorized(int $id): JsonResponse
     {
         $project = Project::find($id);
 

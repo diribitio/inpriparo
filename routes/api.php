@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
             // General routes (mostly for admins)
 
             Route::get('users', [UsersController::class, 'index']);
+            Route::patch('users/convert_to_guestAttendant/{id}', [UsersController::class, 'convert_to_guestAttendant']);
 
             Route::get('feedback', [FeedbackController::class, 'index']);
             Route::get('feedback/{id}', [FeedbackController::class, 'show']);
@@ -47,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('projects', [ProjectsController::class, 'index']);
             Route::get('projects/{id}', [ProjectsController::class, 'show']);
-            Route::patch('projects/{id}', [ProjectsController::class, 'toggleAuthorized']);
+            Route::patch('projects/{id}', [ProjectsController::class, 'toggle_authorized']);
             Route::delete('projects/{id}', [ProjectsController::class, 'destroy']);
             Route::get('projects/{project_id}/timeframes', [TimeframesController::class, 'show']);
 
@@ -63,7 +64,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('roles', [RolesController::class, 'index']);
             Route::post('roles', [RolesController::class, 'store']);
-            Route::patch('roles/{id}', [RolesController::class, 'togglePermission']);
+            Route::patch('roles/{id}', [RolesController::class, 'toggle_permission']);
             Route::delete('roles/{id}', [RolesController::class, 'destroy']);
 
             Route::get('application-settings', [ApplicationSettingsController::class, 'show']);
@@ -74,6 +75,9 @@ Route::middleware('auth')->group(function () {
             Route::get('user/project', [ProjectsController::class, 'show_associated']);
             Route::post('user/project', [ProjectsController::class, 'store']);
             Route::put('user/project', [ProjectsController::class, 'update_associated']);
+
+            Route::post('user/project/assistant', [ProjectsController::class, 'promote_assistant']);
+            Route::delete('user/project/assistant/{id}', [ProjectsController::class, 'demote_assistant']);
 
             Route::post('user/project/timeframes', [TimeframesController::class, 'store']);
             Route::put('user/project/timeframes/{id}', [TimeframesController::class, 'update']);
@@ -92,7 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::get('events', [EventsController::class, 'index']);
         Route::post('events', [EventsController::class, 'store']);
         Route::put('events/{id}', [EventsController::class, 'update']);
-        Route::patch('events/{id}', [EventsController::class, 'syncPermissions']);
+        Route::patch('events/{id}', [EventsController::class, 'sync_permissions']);
         Route::delete('events/{id}', [EventsController::class, 'destroy']);
     });
 

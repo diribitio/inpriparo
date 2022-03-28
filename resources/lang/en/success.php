@@ -29,6 +29,7 @@ return [
     'updatedProject' => 'Successfully updated your project',
     'toggledProjectAuthorized' => 'Successfully toggled authorized',
     'destroyedProject' => 'Successfully deleted the project',
-    'updatedApplicationSettings' => 'Successfully updated the application settings'
+    'updatedApplicationSettings' => 'Successfully updated the application settings',
+    'convertedToGuestAttendant' => 'The role of the user was successfully changed to guestAttendant.'
 
 ];

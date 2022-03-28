@@ -35,9 +35,10 @@ class Schedule
                 return $next($request);
             }
         }
-        
+
+
         if ($request->expectsJson()) {
-            return response()->json(['middleware' => 'Schedule', 'message' => $requiredPermission], 403);
+            return response()->json(['message' => 'missingPermissions'], 403);
         }
 
         return abort(403);

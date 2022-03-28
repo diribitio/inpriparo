@@ -98,7 +98,7 @@ class EventsController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function syncPermissions(int $id, Request $request): JsonResponse
+    public function sync_permissions(int $id, Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'permissions' => 'array',

@@ -29,6 +29,7 @@ return [
     'updatedProject' => 'Ihr Projekt wurde erfolgreich aktualisiert',
     'toggledProjectAuthorized' => 'Erfolgreich autorisiert umgeschaltet',
     'destroyedProject' => 'Das Projekt wurde erfolgreich gelöscht',
-    'updatedApplicationSettings' => 'Ihre Applikationseinstellungen wurden erfolgreich aktualisiert'
+    'updatedApplicationSettings' => 'Ihre Applikationseinstellungen wurden erfolgreich aktualisiert',
+    'convertedToGuestAttendant' => 'Die Rolle des Nutzers wurde erfolgreich zu guestAttendant geändert.'
 
 ];

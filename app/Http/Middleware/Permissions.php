@@ -31,7 +31,7 @@ class Permissions
         }
 
         if ($request->expectsJson()) {
-            return response()->json(['message' => __('error.missingPermissions'), 'permission' => $requiredPermission], 403);
+            return response()->json(['message' => 'missingPermissions', 'perm' => $requiredPermission], 403);
         }
 
         return abort(403);

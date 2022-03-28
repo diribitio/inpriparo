@@ -145,6 +145,8 @@ return [
     'projectNotAuthorized' => 'This project has not yet been authorized.',
     'reachedPreferenceLimit' => 'You\'ve already reached the maximum amount of preferences and can\'t add any more.',
     'reachedFriendsLimit' => 'You\'ve already reached the maximum amount of friends/proposals and can\'t add any more.',
+    'userCannotBePromoted' => 'This user can not be promoted to assistants rank.',
+    'userCannotBeDemoted' => 'This user can not be demoted from assistants rank.',
 
     /*
     |--------------------------------------------------------------------------

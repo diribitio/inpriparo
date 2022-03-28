@@ -56,7 +56,7 @@ class RolesController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function togglePermission(int $id, Request $request): JsonResponse
+    public function toggle_permission(int $id, Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
