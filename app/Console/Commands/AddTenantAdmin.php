@@ -66,7 +66,7 @@ class AddTenantAdmin extends Command
 
         $this->addAdmin($username, $email, $password)->notify(new AdminInvitationNotification());
 
-        $this->info("The tanant admin {$email} has now been invited!");
+        $this->info("The tenant admin {$email} has now been invited!");
     }
 
     private function tenantExists($name)
