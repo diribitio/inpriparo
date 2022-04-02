@@ -46,10 +46,12 @@ class AdminInvitationNotification extends Notification
         $app = config('app.name');
 
         return (new MailMessage())
-            ->subject("$app Invitation")
-            ->greeting("Hello $notifiable->name,")
-            ->line("You have been invited to use $app!")
-            ->line('To get started you need to set a password.')
-            ->action('Set password', $resetUrl);
+            ->subject("$app ".__('notifications.invitationSubject'))
+            ->greeting(__('notifications.hello'))
+            ->line(__('notifications.youHaveBeenInvited')." $app ".__('notifications.asAdmin'))
+            ->line(__('notifications.getStarted'))
+            ->action(__('notifications.setPassword'), $resetUrl)
+            ->line(__('notifications.ifNotInterestedInvitation'))
+            ->salutation(null);
     }
 }
