@@ -33,8 +33,8 @@ class TenantDatabaseSeeder extends Seeder
      */
     private function addRolesAndPermissions()
     {
-        // Create basic permissions for users
-        $userPermissions = collect(['feedback.store', 'projects.index', 'projects.show', 'timeframes.show', 'events.index'])->map(function ($name) {
+        // Create basic permissions for all users
+        $userPermissions = collect(['users.convert_self_to_guestAttendant', 'feedback.store', 'projects.index', 'projects.show', 'timeframes.show', 'events.index', 'users.show_grade_level', 'users.store_grade_level'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Add a default user role
@@ -126,7 +126,7 @@ class TenantDatabaseSeeder extends Seeder
 
 
         // Create permissions (regarding users) for admins
-        $adminUserPermissions = collect(['users.index', 'users.convert_to_guestAttendant'])->map(function ($name) {
+        $adminUserPermissions = collect(['users.index', 'users.convert_to_guestAttendant', 'users.index_unsorted', 'users.make_participant'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding feedback) for admins
@@ -134,7 +134,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding projects) for admins
-        $adminProjectPermissions = collect(['projects.toggle_authorized', 'projects.destroy'])->map(function ($name) {
+        $adminProjectPermissions = collect(['projects.toggle_authorized', 'projects.destroy', 'projects.indexDetailed'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding friendships) for admins

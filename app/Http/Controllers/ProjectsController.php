@@ -31,6 +31,24 @@ class ProjectsController extends Controller
     }
 
     /**
+     * Display all projects in greater detail.
+     *
+     * @return JsonResponse
+     */
+    public function indexDetailed(): JsonResponse
+    {
+        $projects = Project::all();
+
+        $projects->each(function ($project) {
+            $project->leader = $project->leader()->first();
+            $project->assistants = $project->assistants()->get();
+            $project->participants = $project->participants()->get();
+        });
+
+        return response()->json(['projects' => $projects], 200);
+    }
+
+    /**
      * Display the project with the specified id.
      *
      * @param  int  $id

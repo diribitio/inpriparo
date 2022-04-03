@@ -30,6 +30,11 @@ return [
     'toggledProjectAuthorized' => 'Successfully toggled authorized',
     'destroyedProject' => 'Successfully deleted the project',
     'updatedApplicationSettings' => 'Successfully updated the application settings',
-    'convertedToGuestAttendant' => 'The role of the user was successfully changed to guestAttendant.'
+    'convertedToGuestAttendant' => 'The role of the user was successfully changed to guestAttendant.',
+    'convertedSelfToGuestAttendant' => 'The role of your account was successfully changed.',
+    'updatedPassword' => 'Successfully updated your password.',
+    'convertedToParticipant' => 'Successfully enlisted the user as participant in the project.',
+    'convertedToAttendant' => 'The user now no longer has a project.',
+    'setGradeLevel' => 'Successfully set your grade level'
 
 ];

@@ -12,7 +12,7 @@ class ListTenants extends Command
      *
      * @var string
      */
-    protected $signature = 'tenant:list';
+    protected $signature = 'tenants:list';
 
     /**
      * The console command description.

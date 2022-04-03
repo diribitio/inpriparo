@@ -30,6 +30,11 @@ return [
     'toggledProjectAuthorized' => 'Erfolgreich autorisiert umgeschaltet',
     'destroyedProject' => 'Das Projekt wurde erfolgreich gelöscht',
     'updatedApplicationSettings' => 'Ihre Applikationseinstellungen wurden erfolgreich aktualisiert',
-    'convertedToGuestAttendant' => 'Die Rolle des Nutzers wurde erfolgreich zu guestAttendant geändert.'
+    'convertedToGuestAttendant' => 'Die Rolle des Nutzers wurde erfolgreich zu guestAttendant geändert.',
+    'convertedSelfToGuestAttendant' => 'Die Rolle ihres Accounts wurde erfolgreich geändert.',
+    'updatedPassword' => 'Ihr Passwort wurde erfolgreich aktualisiert.',
+    'convertedToParticipant' => 'Der Benutzer wurde erfolgreich als Teilnehmer in das Projekt aufgenommen.',
+    'convertedToAttendant' => 'Der Benutzer hat nun kein Projekt mehr.',
+    'setGradeLevel' => 'Ihre Klassenstufe wurde erfolgreich gespeichert.'
 
 ];

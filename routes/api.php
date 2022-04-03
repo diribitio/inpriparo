@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
             // General routes (mostly for admins)
 
             Route::get('users', [UsersController::class, 'index']);
+            Route::get('users_unsorted', [UsersController::class, 'index_unsorted']);
+            Route::patch('users/{id}/make_participant/{project_id}', [UsersController::class, 'make_participant']);
             Route::patch('users/convert_to_guestAttendant/{id}', [UsersController::class, 'convert_to_guestAttendant']);
 
             Route::get('feedback', [FeedbackController::class, 'index']);
@@ -47,6 +49,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('feedback/{id}', [FeedbackController::class, 'destroy']);
 
             Route::get('projects', [ProjectsController::class, 'index']);
+            Route::get('projectsDetailed', [ProjectsController::class, 'indexDetailed']);
             Route::get('projects/{id}', [ProjectsController::class, 'show']);
             Route::patch('projects/{id}', [ProjectsController::class, 'toggle_authorized']);
             Route::delete('projects/{id}', [ProjectsController::class, 'destroy']);
@@ -103,6 +106,9 @@ Route::middleware('auth')->group(function () {
     Route::get('user', function () {
         return response()->json(['user' => Auth::user()]);
     });
+    Route::get('user/grade_level', [UsersController::class, 'show_grade_level']);
+    Route::patch('user/grade_level/{grade_level}', [UsersController::class, 'store_grade_level']);
+    Route::patch('user/convert_self_to_guestAttendant', [UsersController::class, 'convert_self_to_guestAttendant']);
     Route::get('user/permissions', function () {
         return response()->json(['permissions' => Auth::user()->getAllPermissions()->pluck('name')]);
     });
