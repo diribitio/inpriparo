@@ -134,7 +134,7 @@ class TenantDatabaseSeeder extends Seeder
             return $this->createPermission($name);
         });
         // Create permissions (regarding projects) for admins
-        $adminProjectPermissions = collect(['projects.toggle_authorized', 'projects.destroy', 'projects.indexDetailed'])->map(function ($name) {
+        $adminProjectPermissions = collect(['projects.toggle_authorized', 'projects.destroy', 'projects.index_detailed'])->map(function ($name) {
             return $this->createPermission($name);
         });
         // Create permissions (regarding friendships) for admins

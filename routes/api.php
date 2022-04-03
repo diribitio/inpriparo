@@ -49,7 +49,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('feedback/{id}', [FeedbackController::class, 'destroy']);
 
             Route::get('projects', [ProjectsController::class, 'index']);
-            Route::get('projectsDetailed', [ProjectsController::class, 'indexDetailed']);
+            Route::get('projects_detailed', [ProjectsController::class, 'index_detailed']);
             Route::get('projects/{id}', [ProjectsController::class, 'show']);
             Route::patch('projects/{id}', [ProjectsController::class, 'toggle_authorized']);
             Route::delete('projects/{id}', [ProjectsController::class, 'destroy']);

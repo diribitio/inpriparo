@@ -29,7 +29,7 @@ class UsersController extends Controller
      */
     public function index_unsorted(): JsonResponse
     {
-        $attendants = User::with('roles')->whereHas("roles", function($q) {
+        $attendants = User::with('roles', 'preferences', 'grade_level')->whereHas("roles", function($q) {
             $q->where("name", "attendant");
         })->get();
 

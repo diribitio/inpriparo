@@ -35,14 +35,14 @@ class ProjectsController extends Controller
      *
      * @return JsonResponse
      */
-    public function indexDetailed(): JsonResponse
+    public function index_detailed(): JsonResponse
     {
         $projects = Project::all();
 
         $projects->each(function ($project) {
             $project->leader = $project->leader()->first();
-            $project->assistants = $project->assistants()->get();
-            $project->participants = $project->participants()->get();
+            $project->assistants = $project->assistants()->with('preferences')->get();
+            $project->participants = $project->participants()->with('preferences', 'grade_level')->get();
         });
 
         return response()->json(['projects' => $projects], 200);
