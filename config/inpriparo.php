@@ -21,7 +21,7 @@ return [
      * subdomains of this route, e.g. mytenant.yourapp.com -> yourapp.com is the base url.
      */
 
-    'baseUrl' => 'diribitio.de',
+    'baseUrl' => 'diribitio.digital',
 
     'defaultApplicationSettings' => [
         'non_guest_email_domain' => '@s.school.com',
