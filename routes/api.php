@@ -123,9 +123,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/authenticated', function () {
-    return response()->json(['authenticated' => Auth::check(), 'user' => Auth::user()]);
-});
+Route::get('/authenticated', [UsersController::class, 'authenticated']);
 
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');

@@ -6,10 +6,22 @@ use App\Models\GradeLevel;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use function MongoDB\BSON\toJSON;
+use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
+
+    public function authenticated(): JsonResponse
+    {
+        $auth = $this->authUser();
+        $user = User::with('grade_level')->find($auth->id);
+
+        if (Auth::check()) {
+            return response()->json(['authenticated' => Auth::check(), 'user' => $user]);
+        } else {
+            return response()->json(['authenticated' => Auth::check(), 'user' => '']);
+        }
+    }
     /**
      * Display all users.
      *

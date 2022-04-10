@@ -59,7 +59,7 @@ class ProjectsController extends Controller
         $project = Project::find($id);
 
         if ($project) {
-            $project->leader = $project->leader()->first();
+            $project->leader = $project->leader()->with('roles')->first();
             $project->assistants = $project->assistants()->get();
             $project->participants = $project->participants()->get();
 
@@ -81,7 +81,7 @@ class ProjectsController extends Controller
         $project = $user->project()->first();
 
         if ($project) {
-            $project->leader = $project->leader()->first();
+            $project->leader = $project->leader()->with('roles')->first();
             $project->assistants = $project->assistants()->get();
             $project->participants = $project->participants()->get();
 
