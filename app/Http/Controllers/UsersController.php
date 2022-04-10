@@ -13,15 +13,16 @@ class UsersController extends Controller
 
     public function authenticated(): JsonResponse
     {
-        $auth = $this->authUser();
-        $user = User::with('grade_level')->find($auth->id);
+        $auth = Auth::user(); // This is the only place where Auth::user() could potentially be null (since there is no middleware)
 
         if (Auth::check()) {
-            return response()->json(['authenticated' => Auth::check(), 'user' => $user]);
+            $user = User::with('grade_level')->find($auth->id);
+            return response()->json(['authenticated' => true, 'user' => $user]);
         } else {
-            return response()->json(['authenticated' => Auth::check(), 'user' => '']);
+            return response()->json(['authenticated' => false, 'user' => '']);
         }
     }
+
     /**
      * Display all users.
      *
