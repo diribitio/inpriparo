@@ -24,8 +24,6 @@ class Permissions
         $object = str_replace('controller', '', strtolower(str_replace('App\Http\Controllers\\', '', $actionName[0])));
         $requiredPermission = $object . '.' . $action;
 
-        return $next($request);
-
         if ($this->permissionExists($requiredPermission)) {
             if (Auth::user()->can($requiredPermission)) {
                 return $next($request);
