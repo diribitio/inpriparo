@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ApplicationSettings;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use App\Models\Permission;
 use App\Models\Role;
@@ -157,10 +158,6 @@ class TenantDatabaseSeeder extends Seeder
         $adminApplicationSettingsPermissions = collect(['applicationsettings.show', 'applicationsettings.update'])->map(function ($name) {
             return $this->createPermission($name);
         });
-        // Create permissions (regarding sorting proposals) for admins
-        $adminSortingProposalPermissions = collect(['sorting.show', 'sorting.store', 'sorting.update', 'sorting.destroy', 'sorting.apply'])->map(function ($name) {
-            return $this->createPermission($name);
-        });
         // Add admin role
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo($adminUserPermissions);
@@ -171,7 +168,6 @@ class TenantDatabaseSeeder extends Seeder
         $adminRole->givePermissionTo($adminPreferencesPermissions);
         $adminRole->givePermissionTo($adminRolesAndPermissionsPermissions);
         $adminRole->givePermissionTo($adminApplicationSettingsPermissions);
-        $adminRole->givePermissionTo($adminSortingProposalPermissions);
 
 
         // unused permissions
@@ -201,7 +197,7 @@ class TenantDatabaseSeeder extends Seeder
     /**
      * Creates a permission if it doesn't already exist.
      *
-     * @return Permission
+     * @return Model
      */
     private function createPermission($name) {
         if (!Permission::where('name', $name)->exists()) {
